@@ -1,18 +1,18 @@
-import datetime  # Importing datetime module for handling dates and times
+import datetime
 
-# Dictionary to store exams information, with subject name as key, and date and time as values
+# exams data with date and time
 exams = {
     'math': {'date': '2025-01-10', 'time': '10:00'},
     'physics': {'date': '2025-01-12', 'time': '14:00'}
 }
 
-# Dictionary to store assignment information, with subject name as key, and due date as value
+# assignments data with due date
 assignments = {
     'math': {'due_date': '2025-01-05'},
     'physics': {'due_date': '2025-01-07'}
 }
 
-# Dictionary to store class timetable, with days as keys and a list of subjects and times for each day
+# class schedule with subjects, day, and time
 classes = {
     'monday': [
         {'subject': 'math', 'time': '08:00'},
@@ -24,73 +24,73 @@ classes = {
     ]
 }
 
-# Function to add exam details to the exams dictionary
+# function to add a new exam
 def add_exam(subject, date, time):
     exams[subject] = {'date': date, 'time': time}
     print(f"exam for {subject} added on {date} at {time}.")
 
-# Function to add assignment details to the assignments dictionary
+# function to add a new assignment
 def add_assignment(subject, due_date):
     assignments[subject] = {'due_date': due_date}
     print(f"assignment for {subject} added, due by {due_date}.")
 
-# Function to add class schedule details to the classes dictionary
+# function to add a class schedule
 def add_class(subject, day, time):
-    if day not in classes:  # Check if the day already exists in the dictionary
-        classes[day] = []  # If not, create an empty list for that day
+    if day not in classes:
+        classes[day] = []
     classes[day].append({'subject': subject, 'time': time})
     print(f"class for {subject} added on {day} at {time}.")
 
-# Function to view all upcoming exams
+# function to view all exams
 def view_exams():
     if not exams:
-        print("no exams added.")  # If no exams are added, print this message
+        print("no exams added.")
     else:
         print("upcoming exams:")
         for subject, details in exams.items():
             print(f"subject: {subject}, date: {details['date']}, time: {details['time']}")
 
-# Function to view all upcoming assignments
+# function to view all assignments
 def view_assignments():
     if not assignments:
-        print("no assignments added.")  # If no assignments are added, print this message
+        print("no assignments added.")
     else:
         print("upcoming assignments:")
         for subject, details in assignments.items():
             print(f"subject: {subject}, due date: {details['due_date']}")
 
-# Function to view the class timetable for the entire week
+# function to view the class timetable
 def view_classes():
     if not classes:
-        print("no classes scheduled.")  # If no classes are scheduled, print this message
+        print("no classes scheduled.")
     else:
         print("class timetable:")
         for day, subjects in classes.items():
-            print(f"day: {day.capitalize()}:")  # Capitalize the first letter of the day for better readability
+            print(f"day: {day.capitalize()}:")
             for subject in subjects:
                 print(f"  subject: {subject['subject']}, time: {subject['time']}")
 
-# Function to check reminders for today's exams and assignments
+# function to check today's reminders
 def check_reminders():
-    today = datetime.date.today()  # Get today's date
+    today = datetime.date.today()
     print(f"\ntoday's date: {today}")
 
     print("\nupcoming exams:")
     for subject, details in exams.items():
-        exam_date = datetime.datetime.strptime(details['date'], '%Y-%m-%d').date()  # Convert exam date from string to date object
-        if exam_date == today:  # If the exam is today, print a reminder
+        exam_date = datetime.datetime.strptime(details['date'], '%Y-%m-%d').date()
+        if exam_date == today:
             print(f"exam for {subject} is today at {details['time']}.")
 
     print("\nupcoming assignments:")
     for subject, details in assignments.items():
-        due_date = datetime.datetime.strptime(details['due_date'], '%Y-%m-%d').date()  # Convert due date from string to date object
-        if due_date == today:  # If the assignment is due today, print a reminder
+        due_date = datetime.datetime.strptime(details['due_date'], '%Y-%m-%d').date()
+        if due_date == today:
             print(f"assignment for {subject} is due today.")
 
-# Main function to run the college management system
+# main function for the college management system
 def college_management_system():
-    while True:  # Infinite loop to keep the system running
-        print("\ncollege exam and reminder system")  # Display the menu
+    while True:
+        print("\ncollege exam and reminder system")
         print("1. add exam")
         print("2. view exams")
         print("3. add assignment")
@@ -100,9 +100,8 @@ def college_management_system():
         print("7. check reminders")
         print("8. exit")
         
-        choice = input("enter your choice: ")  # User input to select an option
+        choice = input("enter your choice: ")
 
-        # Depending on the user's choice, call the corresponding function
         if choice == '1':
             subject = input("enter subject name: ")
             date = input("enter exam date (yyyy-mm-dd): ")
@@ -133,11 +132,12 @@ def college_management_system():
             check_reminders()
 
         elif choice == '8':
-            print("exiting the system.")  # Exit message
-            break  # Exit the while loop
+            print("exiting the system.")
+            break
 
         else:
-            print("invalid choice, please try again.")  # If the user enters an invalid choice
+            print("invalid choice, please try again.")
 
+# run the program
 if __name__ == "__main__":
-    college_management_system()  # Run the college management system
+    college_management_system()
