@@ -1,115 +1,172 @@
 import datetime
+import random
 
-# Function to add patient details
-def add_patient(id, name, bed_number, doctor_assigned, amount_paid, amount_due):
-    patient = {
-        "id": id,
-        "name": name,
-        "bed_number": bed_number,
-        "doctor_assigned": doctor_assigned,
-        "admission_date": datetime.datetime.now().strftime('%Y-%m-%d'),
-        "amount_paid": amount_paid,
-        "amount_due": amount_due
-    }
-    return patient
+class Patient:
+    def __init__(self, id, name, bed_number, doctor_assigned, amount_paid, amount_due):
+        self.id = id
+        self.name = name
+        self.bed_number = bed_number
+        self.doctor_assigned = doctor_assigned
+        self.admission_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        self.amount_paid = amount_paid
+        self.amount_due = amount_due
 
-# Function to display all patients
-def show_all_patients(patients):
-    if not patients:
-        print("\nNo patients found in the system.")
-    else:
-        print("\n--- All Patient Details ---")
-        for patient in patients:
-            print(f"ID: {patient['id']}, Name: {patient['name']}, Bed Number: {patient['bed_number']}, "
-                  f"Doctor: {patient['doctor_assigned']}, Admission Date: {patient['admission_date']}")
+    def get_patient_info(self):
+        return {
+            "ID": self.id,
+            "Name": self.name,
+            "Bed Number": self.bed_number,
+            "Doctor Assigned": self.doctor_assigned,
+            "Admission Date": self.admission_date,
+            "Amount Paid": self.amount_paid,
+            "Amount Due": self.amount_due
+        }
 
-# Function to show patient details by name
-def show_patient_details(patient_name, patients):
-    found = False
-    for patient in patients:
-        if patient['name'].lower() == patient_name.lower():
-            found = True
-            print("\n--- Patient Details ---")
-            print(f"ID: {patient['id']}")
-            print(f"Name: {patient['name']}")
-            print(f"Bed Number: {patient['bed_number']}")
-            print(f"Doctor Assigned: {patient['doctor_assigned']}")
-            print(f"Admission Date: {patient['admission_date']}")
-            print(f"Amount Paid: {patient['amount_paid']}")
-            print(f"Amount Due: {patient['amount_due']}")
-            break
-    if not found:
-        print("Patient not found.")
+    def update_payment(self, new_amount_paid):
+        self.amount_paid = new_amount_paid
+        self.amount_due = round(self.amount_due - new_amount_paid, 2)
 
-# Function to update payment details of a patient
-def update_payment(patient_name, patients, payment):
-    found = False
-    for patient in patients:
-        if patient['name'].lower() == patient_name.lower():
-            found = True
-            patient['amount_paid'] += payment
-            patient['amount_due'] -= payment
-            print(f"\nUpdated payment for {patient_name}: Amount Paid: {patient['amount_paid']}, Amount Due: {patient['amount_due']}")
-            break
-    if not found:
-        print("Patient not found.")
+class Doctor:
+    def __init__(self, id, name, specialization):
+        self.id = id
+        self.name = name
+        self.specialization = specialization
 
-# Function to remove a patient
-def remove_patient(patient_name, patients):
-    found = False
-    for patient in patients:
-        if patient['name'].lower() == patient_name.lower():
-            found = True
-            patients.remove(patient)
-            print(f"\nPatient {patient_name} has been removed from the system.")
-            break
-    if not found:
-        print("Patient not found.")
+    def __str__(self):
+        return f"Dr. {self.name}, {self.specialization}"
 
-# Main function to run the program
+class Hospital:
+    def __init__(self, name):
+        self.name = name
+        self.patients = []
+        self.doctors = []
+
+    def add_doctor(self, doctor):
+        self.doctors.append(doctor)
+
+    def add_patient(self, patient):
+        self.patients.append(patient)
+
+    def get_doctor_by_id(self, doctor_id):
+        for doctor in self.doctors:
+            if doctor.id == doctor_id:
+                return doctor
+        return None
+
+    def show_patient_details(self, patient_name):
+        for patient in self.patients:
+            if patient.name.lower() == patient_name.lower():
+                patient_info = patient.get_patient_info()
+                print("\n--- Patient Details ---")
+                for key, value in patient_info.items():
+                    print(f"{key}: {value}")
+                break
+        else:
+            print("Patient not found.")
+
+    def show_all_patients(self):
+        if self.patients:
+            print("\n--- All Patients ---")
+            for patient in self.patients:
+                patient_info = patient.get_patient_info()
+                print(f"\nPatient Name: {patient_info['Name']}")
+                for key, value in patient_info.items():
+                    print(f"{key}: {value}")
+        else:
+            print("No patients in the system.")
+
+    def update_patient_payment(self, patient_name, new_amount_paid):
+        for patient in self.patients:
+            if patient.name.lower() == patient_name.lower():
+                patient.update_payment(new_amount_paid)
+                print(f"Payment updated for {patient_name}.")
+                break
+        else:
+            print("Patient not found.")
+
+    def remove_patient(self, patient_name):
+        for patient in self.patients:
+            if patient.name.lower() == patient_name.lower():
+                self.patients.remove(patient)
+                print(f"{patient_name} has been discharged and removed from the system.")
+                break
+        else:
+            print("Patient not found.")
+
+    def search_doctors_by_specialization(self, specialization):
+        print(f"\n--- Doctors with {specialization} specialization ---")
+        found = False
+        for doctor in self.doctors:
+            if doctor.specialization.lower() == specialization.lower():
+                print(f"{doctor}")
+                found = True
+        if not found:
+            print(f"No doctors found with {specialization} specialization.")
+
+    def track_revenue(self):
+        total_revenue = sum(patient.amount_paid for patient in self.patients)
+        print(f"\n--- Total Revenue ---")
+        print(f"Total amount collected: {total_revenue}")
+
 def main():
-    # List to store patient details
-    patients = []
+    hospital = Hospital("City Hospital")
 
-    # Add patients manually
-    patients.append(add_patient(1, "Alice Johnson", "Bed1", "Dr. John Smith", 2200, 8000))
-    patients.append(add_patient(2, "Bob Brown", "Bed2", "Dr. Sarah Lee", 1500, 7000))
-    patients.append(add_patient(3, "Charlie Davis", "Bed3", "Dr. John Smith", 1800, 5500))
-    patients.append(add_patient(4, "David White", "Bed4", "Dr. Sarah Lee", 2000, 4500))
-    patients.append(add_patient(5, "Eve Martin", "Bed5", "Dr. John Smith", 2500, 7500))
-    patients.append(add_patient(6, "Frank Harris", "Bed6", "Dr. Sarah Lee", 2700, 9300))
-    patients.append(add_patient(7, "Grace Thompson", "Bed7", "Dr. John Smith", 3500, 6200))
-    patients.append(add_patient(8, "Henry Lee", "Bed8", "Dr. Sarah Lee", 3000, 7100))
-    patients.append(add_patient(9, "Isla Adams", "Bed9", "Dr. John Smith", 2100, 8800))
-    patients.append(add_patient(10, "James Scott", "Bed10", "Dr. Sarah Lee", 2300, 5700))
+    # Adding doctors
+    doctor1 = Doctor(1, "John Smith", "Cardiologist")
+    doctor2 = Doctor(2, "Sarah Lee", "Orthopedic Surgeon")
+    hospital.add_doctor(doctor1)
+    hospital.add_doctor(doctor2)
 
-    # Menu for the user
+    # Collecting patient details (only name input required)
+    print("Welcome to the Hospital Management System!")
+    patient_name = input("Enter Patient Name: ")
+
+    # Generating random patient ID, bed number, doctor, amount paid, and amount due for simulation
+    patient_id = random.randint(100, 999)
+    bed_number = f"Bed{random.randint(1, 100)}"
+    doctor_choice = random.choice([doctor1, doctor2])
+    doctor_assigned = doctor_choice.name
+    amount_paid = round(random.uniform(1000, 5000), 2)
+    total_amount = round(random.uniform(5000, 10000), 2)
+    amount_due = total_amount - amount_paid
+
+    # Create patient and add to the hospital
+    patient = Patient(patient_id, patient_name, bed_number, doctor_assigned, amount_paid, amount_due)
+    hospital.add_patient(patient)
+
+    # Show patient details
+    hospital.show_patient_details(patient_name)
+
+    # Additional actions
     while True:
-        print("\n--- Hospital Management System ---")
-        print("1. Show all patients")
-        print("2. Show patient details by name")
-        print("3. Update payment details")
-        print("4. Remove a patient")
-        print("5. Exit")
-        choice = input("Enter your choice: ")
+        print("\nChoose an option:")
+        print("1. View All Patients")
+        print("2. Update Payment")
+        print("3. Remove Patient")
+        print("4. Search Doctors by Specialization")
+        print("5. Track Total Revenue")
+        print("6. Exit")
 
+        choice = input("Enter your choice (1-6): ")
+        
         if choice == "1":
-            show_all_patients(patients)
+            hospital.show_all_patients()
         elif choice == "2":
-            patient_name = input("Enter the patient's name: ")
-            show_patient_details(patient_name, patients)
+            patient_name = input("Enter the patient's name to update payment: ")
+            new_payment = float(input("Enter the new payment amount: "))
+            hospital.update_patient_payment(patient_name, new_payment)
         elif choice == "3":
-            patient_name = input("Enter the patient's name: ")
-            payment = float(input("Enter the payment amount: "))
-            update_payment(patient_name, patients, payment)
-        elif choice == "4":
             patient_name = input("Enter the patient's name to remove: ")
-            remove_patient(patient_name, patients)
+            hospital.remove_patient(patient_name)
+        elif choice == "4":
+            specialization = input("Enter the specialization (e.g., Cardiologist): ")
+            hospital.search_doctors_by_specialization(specialization)
         elif choice == "5":
-            print("Exiting the system...")
+            hospital.track_revenue()
+        elif choice == "6":
             break
         else:
-            print("Invalid choice. Please try again.")
+            print("Invalid choice! Please try again.")
 
 if __name__ == "__main__":
     main()
